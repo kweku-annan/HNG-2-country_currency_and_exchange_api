@@ -1,13 +1,34 @@
 from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
 
-app = Flask(__name__)
+# Initialize extensions
+db = SQLAlchemy()
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify("Welcome to the Country Currency & Exchange API"), 200
+def create_app():
+    """Creates and configures the Flask application"""
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    db.init_app(app)
+
+    with app.app_context():
+        from api.models.countries import Country
+        print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
+        print("Creating tables...")
+        db.create_all()
+        print("Tables created.")
+
+
+    @app.route('/', methods=['GET'])
+    def home():
+        return jsonify("Welcome to the Country Currency & Exchange API"), 200
+
+    return app
+
 
 
 if __name__ == "__main__":
+    app = create_app()
     app.run(debug=True)
 
