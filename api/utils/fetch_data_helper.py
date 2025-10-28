@@ -27,9 +27,9 @@ def fetch_exchange_rates():
         print(f"Error fetching exchange rates data: {e}")
         return None
 
-print(type(fetch_countries_data()))
-exchange_rate = fetch_exchange_rates()
-print(exchange_rate.get('rates').get('GHS'))
+# print(type(fetch_countries_data()))
+# exchange_rate = fetch_exchange_rates()
+# print(exchange_rate.get('rates').get('GHS'))
 
 
 

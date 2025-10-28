@@ -73,7 +73,7 @@ def refresh_countries_data():
 
     return jsonify({"message": "Countries refreshed successfully!"}), 200
 
-
+# @country_bp.route('/countries', methods=['GET'])
 
 
 

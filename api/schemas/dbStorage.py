@@ -31,13 +31,13 @@ class DBStorage:
 
     def exists(self, name):
         """Checks if a Country with the given value or name exists"""
-        if self.__session.query(Country).filter(Country.name.islike(name)).first():
+        if self.__session.query(Country).filter(Country.name.ilike(name)).first():
             return True
         return False
 
     def get_by_name(self, name):
         """Retrieves a country by a specified value"""
-        return self.__session.query(Country).filter(Country.name.islike(name)).first()
+        return self.__session.query(Country).filter(Country.name.ilike(name)).first()
 
     def get_all(self, filters=None):
         """Retrieves all Country records, optionally filtered by criteria"""
