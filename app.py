@@ -14,10 +14,7 @@ def create_app():
 
     with app.app_context():
         from api.models.countries import Country
-        print(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
-        print("Creating tables...")
         db.create_all()
-        print("Tables created.")
 
 
     @app.route('/', methods=['GET'])

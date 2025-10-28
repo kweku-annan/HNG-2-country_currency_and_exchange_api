@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 """Countries table"""
-from datetime import datetime
-
 from sqlalchemy import Column, String, Integer, Numeric, DateTime
 from sqlalchemy.orm import declarative_base
 
@@ -10,6 +8,7 @@ Base = declarative_base()
 
 class Country(Base):
     """Defines the country table"""
+    from datetime import datetime
     __tablename__ = 'countries'
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
