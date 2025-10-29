@@ -74,14 +74,13 @@ def refresh_countries_data():
             else:
                 country = Country(**new_data)
                 storage.save(country)
-
-            try:
-                image_info = storage.image_data()
-                generate_image(image_info)
-            except Exception as e:
-                return jsonify({"error": "Internal server error"}), 500
         else:
             continue
+        # try:
+        #     image_info = storage.image_data()
+        #     generate_image(image_info)
+        # except Exception as e:
+        #     return jsonify({"error": "Internal server error"}), 500
     return jsonify({"message": "Countries refreshed successfully!"}), 200
 
 @country_bp.route('/countries', methods=['GET'])
