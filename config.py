@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Configuration settings for the application"""
 import os
+import pymysql
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -92,7 +92,7 @@ class DBStorage:
         top_countries = self.__session.query(Country).order_by(Country.estimated_gdp.desc()).limit(5).all()
         last_refreshed = self.__session.query(Country).order_by(Country.last_refreshed_at.desc()).first()
         last_refreshed_at = last_refreshed.last_refreshed_at if last_refreshed else None
-        print(type(last_refreshed_at))
+        # print(type(last_refreshed_at))
 
         data = {
             "total_countries": total_countries,
