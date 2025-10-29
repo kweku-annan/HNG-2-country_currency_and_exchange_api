@@ -99,7 +99,7 @@ class DBStorage:
             "top_countries_by_gdp": [
                 {
                     "name": country.name,
-                    "estimated_gdp": round(country.estimated_gdp) if country.estimated_gdp else None
+                    "estimated_gdp": country.estimated_gdp if country.estimated_gdp else None
                 } for country in top_countries
             ],
             "last_refreshed_at": last_refreshed_at
