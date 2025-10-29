@@ -26,6 +26,7 @@ def refresh_countries_data():
             }
         ), 503
 
+    # Fetch exchange rates data
     exchange_rates_data = fetch_exchange_rates()
     if not exchange_rates_data:
         return jsonify(
@@ -34,27 +35,28 @@ def refresh_countries_data():
                 "details": "Could not fetch data from Exchange Rates API"
             }
         ), 503
+    rates = exchange_rates_data.get('rates', {})
 
     # Parse and store countries data
     for country_info in countries_data:
         name = country_info.get('name', None)
+        if not name:
+            continue
         capital = country_info.get('capital', None)
         region = country_info.get('region', None)
         population = country_info.get('population', None)
         currencies = country_info.get('currencies', [])
         currency_code = currencies[0]['code'] if currencies else None
         flag_url = country_info.get('flag', None)
-        if currency_code:
-            exchange_rate = exchange_rates_data.get('rates', {}).get(currency_code, None)
-            if exchange_rate:
-                random_value = random.uniform(1000, 2000)
-                estimated_gdp = (population * random_value) / exchange_rate
-            else:
-                exchange_rate = None
-                estimated_gdp = None
-        else:
-            exchange_rate = None
-            estimated_gdp = None
+
+        # Calculate exchange rate and estimated GDP
+        exchange_rate = None
+        estimated_gdp = None
+
+        if currency_code and currency_code in rates:
+            exchange_rate = rates[currency_code]
+            random_value = random.uniform(1000, 2000)
+            estimated_gdp = (population * random_value) / exchange_rate
 
         new_data = {
             "name": name,
@@ -67,20 +69,17 @@ def refresh_countries_data():
             "flag_url": flag_url
         }
 
-        if name:
-            if storage.exists(name):
-                country = storage.get_by_name(name)
-                storage.update(country, **new_data)
-            else:
-                country = Country(**new_data)
-                storage.save(country)
+        country = storage.get_by_name(name)
+        if country:
+            storage.update(country, **new_data)
         else:
-            continue
-        # try:
-        #     image_info = storage.image_data()
-        #     generate_image(image_info)
-        # except Exception as e:
-        #     return jsonify({"error": "Internal server error"}), 500
+            country = Country(**new_data)
+            storage.save(country)
+    try:
+        image_info = storage.image_data()
+        generate_image(image_info)
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
     return jsonify({"message": "Countries refreshed successfully!"}), 200
 
 @country_bp.route('/countries', methods=['GET'])
