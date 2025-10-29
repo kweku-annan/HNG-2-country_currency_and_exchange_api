@@ -44,7 +44,9 @@ class DBStorage:
         query = self.__session.query(Country)
         if filters:
             for attr, value in filters.items():
-                if attr == 'sort':
+                if attr == 'currency':
+                    query = query.filter(Country.currency_code.ilike(value))
+                elif attr == 'sort':
                     if value == 'gdp_desc':
                         query = query.order_by(Country.estimated_gdp.desc())
                     elif value == 'gdp_asc':
@@ -75,7 +77,7 @@ class DBStorage:
         last_refreshed_at = last_refreshed.last_refreshed_at if last_refreshed else None
         return {
             "total_countries": total_countries,
-            "last_refreshed_at": last_refreshed_at
+            "last_refreshed_at": last_refreshed_at.replace(microsecond=0).isoformat() + 'Z'
         }
 
     def image_data(self):

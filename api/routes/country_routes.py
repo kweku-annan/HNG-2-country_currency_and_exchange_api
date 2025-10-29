@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 """Defines routes for country and currency data"""
+import os.path
 import random
-from flask import Blueprint, jsonify
+
+from flask import Blueprint, jsonify, request, send_file
+
 from api.models.countries import Country
 from api.utils.fetch_data_helper import fetch_countries_data, fetch_exchange_rates
 from api.schemas.dbStorage import DBStorage
-
+from api.utils.image_generator import generate_image
 
 # Initialize blueprint and storage
 country_bp = Blueprint('countries', __name__)
@@ -71,11 +74,62 @@ def refresh_countries_data():
             country = Country(**new_data)
             storage.save(country)
 
+        try:
+            image_info = storage.image_data()
+            generate_image(image_info)
+        except Exception as e:
+            return jsonify({"error": "Internal server error"}), 500
     return jsonify({"message": "Countries refreshed successfully!"}), 200
 
-# @country_bp.route('/countries', methods=['GET'])
+@country_bp.route('/countries', methods=['GET'])
+def get_countries():
+    """Retrieves countries with optional filtering and sorting"""
+    try:
+        params = request.args
+        filters = storage.get_all(params)
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
 
+    return jsonify([k.to_dict() for k in filters]), 200
 
+@country_bp.route('/countries/<string:name>', methods=['GET'])
+def get_country(name):
+    """Retrieves a single country by name"""
+    country = storage.get_by_name(name)
+    if not country:
+        return jsonify({"error": "Country not found"}), 404
+
+    return jsonify(country.to_dict()), 200
+
+@country_bp.route('/countries/<string:name>', methods=['DELETE'])
+def delete_country(name):
+    """Deletes a country by name"""
+    if not storage.exists(name):
+        return jsonify({"error": "Country not found"}), 404
+
+    success = storage.delete(name)
+    if not success:
+        return jsonify({"error": "Internal server error"}), 500
+
+    return jsonify({"message": f"Country '{name}' deleted successfully"}), 200
+
+@country_bp.route('/countries/status', methods=['GET'])
+def get_countries_status():
+    """Retrieves status of countries data"""
+    status = storage.status()
+    if not status:
+        return jsonify({"error": "Internal server error"}), 500
+    return jsonify(status), 200
+
+@country_bp.route('/countries/images', methods=['GET'])
+def get_country_images():
+    """Serve the generated image of countries data"""
+    image_path = 'cache/summary.png'
+
+    if not os.path.exists(image_path):
+        return jsonify({"error": "Summary image not found"}), 404
+
+    return send_file(image_path, mimetype='image/png'), 200
 
 
 

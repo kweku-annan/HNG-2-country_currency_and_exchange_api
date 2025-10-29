@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 """Countries table"""
+from decimal import Decimal
+
 from sqlalchemy import Column, String, Integer, Numeric, DateTime
 from sqlalchemy.orm import declarative_base
 
@@ -36,3 +38,18 @@ class Country(Base):
         self.exchange_rate = exchange_rate
         self.estimated_gdp = estimated_gdp
         self.flag_url = flag_url
+
+    def to_dict(self):
+        """Return a dictionary representation of the Country instance"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "capital": self.capital,
+            "region": self.region,
+            "population": self.population,
+            "currency_code": self.currency_code,
+            "exchange_rate": float(self.exchange_rate) if self.exchange_rate else None,
+            "estimated_gdp": float(self.estimated_gdp) if self.estimated_gdp else None,
+            "flag_url": self.flag_url,
+            "last_refreshed_at": self.last_refreshed_at.replace(microsecond=0).isoformat() + 'Z' if self.last_refreshed_at else None
+        }
