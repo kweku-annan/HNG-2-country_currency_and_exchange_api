@@ -67,18 +67,21 @@ def refresh_countries_data():
             "flag_url": flag_url
         }
 
-        if storage.exists(name):
-            country = storage.get_by_name(name)
-            storage.update(country, **new_data)
-        else:
-            country = Country(**new_data)
-            storage.save(country)
+        if name:
+            if storage.exists(name):
+                country = storage.get_by_name(name)
+                storage.update(country, **new_data)
+            else:
+                country = Country(**new_data)
+                storage.save(country)
 
-        try:
-            image_info = storage.image_data()
-            generate_image(image_info)
-        except Exception as e:
-            return jsonify({"error": "Internal server error"}), 500
+            try:
+                image_info = storage.image_data()
+                generate_image(image_info)
+            except Exception as e:
+                return jsonify({"error": "Internal server error"}), 500
+        else:
+            continue
     return jsonify({"message": "Countries refreshed successfully!"}), 200
 
 @country_bp.route('/countries', methods=['GET'])
