@@ -114,7 +114,7 @@ def delete_country(name):
 
     return jsonify({"message": f"Country '{name}' deleted successfully"}), 200
 
-@country_bp.route('/countries/status', methods=['GET'])
+@country_bp.route('/status', methods=['GET'])
 def get_countries_status():
     """Retrieves status of countries data"""
     status = storage.status()
@@ -122,7 +122,7 @@ def get_countries_status():
         return jsonify({"error": "Internal server error"}), 500
     return jsonify(status), 200
 
-@country_bp.route('/countries/images', methods=['GET'])
+@country_bp.route('/countries/image', methods=['GET'])
 def get_country_images():
     """Serve the generated image of countries data"""
     image_path = 'cache/summary.png'
