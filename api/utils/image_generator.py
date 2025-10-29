@@ -25,7 +25,7 @@ def generate_image(data):
     # Draw top 5 countries by GDP
     y_position = 140
     for i, country in enumerate(data['top_countries_by_gdp'], 1):
-        gdp_formatted = f"${country['estimated_gdp']:,.1f}" if country['estimated_gdp'] else "N/A"
+        gdp_formatted = f"${country['estimated_gdp']:,.2f}" if country['estimated_gdp'] else "N/A"
         text = f"{i}. {country['name']} - {gdp_formatted}"
         draw.text((40, y_position), text, fill='white', font=font_text)
         y_position += 30
